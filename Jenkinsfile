@@ -50,7 +50,7 @@ properties([
 environment {
     APP_NAME          = 'jenkins-gha-demo'
     NODE_VERSION      = '18'
-    DOCKER_REGISTRY   = 'docker.io/samarthdoc123'
+    DOCKER_REGISTRY   = 'docker.io/your-dockerhub-username'
     IMAGE_NAME        = "${DOCKER_REGISTRY}/${APP_NAME}"
     IMAGE_TAG         = "${params.DOCKER_TAG ?: env.BUILD_NUMBER}"
     DEPLOY_ENV        = "${params.DEPLOY_ENV}"
@@ -138,9 +138,12 @@ pipeline {
                         always {
                             junit 'junit.xml'
                             publishHTML([
-                                reportDir  : 'coverage/lcov-report',
-                                reportFiles: 'index.html',
-                                reportName : 'Code Coverage Report'
+                                reportDir            : 'coverage/lcov-report',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Code Coverage Report',
+                                keepAll              : true,
+                                alwaysLinkToLastBuild: true,
+                                allowMissing         : false
                             ])
                         }
                     }
@@ -218,7 +221,7 @@ pipeline {
         failure {
             script {
                 notify.slack('FAILURE', env.JOB_NAME)
-                notify.email('FAILURE', 'samarthm@devtools.in')
+                notify.email('FAILURE', 'devops-team@your-org.com')
             }
         }
 
